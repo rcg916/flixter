@@ -1,19 +1,10 @@
 <script>
   $(function() {
-    $('.sections').sortable({
-      update: function( event, ui ) {
-        $.ajax({
-          type: 'PUT',
-          url: ui.item.data('update-url'),
-          dataType: 'json',
-          data: { section: { row_order_position: ui.item.index() } }
-        });
-      }
+    $('.new-lesson-button').click(function(event) {
+      var lessonUrl = $(event.target).data('lesson-url');
+      $('#newLessonForm').attr('action', lessonUrl);
     });
-  });
-</script>
-<script>
-  $(function() {
+
     $('.lessons').sortable({
       update: function( event, ui ) {
         $.ajax({
@@ -24,6 +15,18 @@
         });
       }
     });
+
+    $('.sections').sortable({
+      update: function( event, ui ) {
+        $.ajax({
+          type: 'PUT',
+          url: ui.item.data('update-url'),
+          dataType: 'json',
+          data: { section: { row_order_position: ui.item.index() } }
+        });
+      }
+    });
+
   });
 </script>
 
@@ -52,7 +55,7 @@
           <%= section.title %>
         </div>        
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary btn-lg float-right" data-toggle="modal" data-target="#newLessonModal">
+        <button type="button" class="btn btn-primary btn-lg float-right new-lesson-button" data-toggle="modal" data-target="#newLessonModal" data-lesson-url="<%= instructor_section_lessons_path(section) %>">
           New Lesson...
         </button>
 
@@ -120,7 +123,7 @@
         </button>
         <h4 class="modal-title" id="newLessonModalLabel">Add a new lesson</h4>
       </div>
-      <%= simple_form_for @lesson, url: "#" do |f| %>
+      <%= simple_form_for @lesson, url: "#", html: {id: 'newLessonForm'} do |f| %>
       <div class="modal-body">        
           <%= f.input :title %>
           <%= f.input :subtitle %>
